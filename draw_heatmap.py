@@ -9,11 +9,11 @@ df_L = df[df['Cooling'] == 'L']
 
 mean_data = df_L.groupby(['Jobs', 'Processors'])['Time'].mean().unstack()
 
-# Cортировка оси Jobs по возрастанию (если нужно сверху вниз)
 mean_data = mean_data.sort_index(ascending=False)
 
 #heatmap_data = heatmap_data.sort_index(ascending=False)
 plt.figure(figsize=(10, 7))
 sns.heatmap(mean_data, annot=True, fmt='.0f', cmap='viridis')
 plt.title('Time (Jobs vs Processors)')
-plt.show()
+#plt.show()
+plt.savefig('heatmap_3.png', dpi=300, bbox_inches='tight')

@@ -17,8 +17,8 @@ M_SEQ = 2 8 16 20
 NPROCS = 2 4 8 16 20
 COOLINGS = L
 
-RESULT_CSV = results_seq.csv
-RESULT_PAR = results_par.csv
+RESULT_CSV = results_seq4.csv
+RESULT_PAR = results_par4.csv
 
 # ----------- Исследование последовательного алгоритма -------
 sequential: $(RESULT_CSV)
@@ -51,7 +51,7 @@ $(RESULT_PAR):
 	  for run in 1; do \
 	    $(GENERATOR) $(JOBS_PAR) $(MIN_TIME) $(MAX_TIME) > jobs.csv; \
 	    for K in $(COOLINGS); do \
-	      for M in 4; do \
+	      for M in 8; do \
 	        /usr/bin/time -f "$$Nproc,$$M,$$K,$$run,%e" -a -o time.tmp -- \
 	          $(PROGRAM) $$Nproc $$M $$K > prog_out.tmp; \
 	        best=`tail -100 prog_out.tmp | grep 'Best K2:' | awk '{print $$3}'`; \
