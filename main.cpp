@@ -41,7 +41,6 @@ public:
 };
 
 class CauchyCooling : public CoolingSchedule {
-    double beta;
 public:
     double getNextTemperature(double currTemp, int iter) const override {
         return currTemp / (1 + iter);
@@ -49,7 +48,6 @@ public:
 };
 
 class LinearCooling : public CoolingSchedule {
-    double gamma;
 public:
     double getNextTemperature(double currTemp, int iter) const override {
         return currTemp * 0.99;
@@ -61,7 +59,7 @@ struct Job { int id; int duration; };
 class Schedule: public Solution {
 public:
     int N, M;
-    std::vector<std::vector<int>> processors; // каждый процессор хранит номера работ
+    std::vector<std::vector<int>> processors;
     std::vector<int> jobTimes;
 
     Schedule(int M, const std::vector<int>& times, const std::vector<std::vector<int>>& processors)
@@ -249,7 +247,7 @@ int main(int argc, char* argv[]) {
     bind(listen_sock, (sockaddr*)&addr, sizeof(addr));
     listen(listen_sock, Nproc);
 
-    auto t0=clock();
+    //auto t0=clock();
     for(int i=0; i < Nproc; i++) {
         if(fork() == 0) {
             int sock = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -320,7 +318,7 @@ int main(int argc, char* argv[]) {
     for(int i=0; i < Nproc; i++) close(conns[i]);
     close(listen_sock);
     unlink(SOCKET_PATH);
-    auto dt=(clock()-t0)/CLOCKS_PER_SEC;
+    //auto dt=(clock()-t0)/CLOCKS_PER_SEC;
     //std::cout << "Time:" << dt << "\n";
     return 0;
 }
