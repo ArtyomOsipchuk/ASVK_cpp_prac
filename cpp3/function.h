@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <algorithm>
+#include <iostream>
 
 class TFunction;
 using TFunctionPtr = std::shared_ptr<TFunction>;
@@ -199,7 +200,7 @@ public:
     double operator()(double x) const override {
         double denominator = (*right_)(x);
         if (std::abs(denominator) < 1e-12) {
-            throw std::runtime_error("Division by zero");
+            throw std::logic_error("Division by zero");
         }
         return (*left_)(x) / denominator;
     }
@@ -211,7 +212,7 @@ public:
         double g_prime = right_->GetDeriv(x);
         
         if (std::abs(g) < 1e-12) {
-            throw std::runtime_error("Division by zero in derivative");
+            throw std::logic_error("Division by zero in derivative");
         }
         
         return (f_prime * g - f * g_prime) / (g * g);
@@ -303,10 +304,10 @@ TFunctionPtr operator/(const T&, const TFunction&) {
 double GradientDescentRoot(TFunctionPtr func, double initial_guess, int iterations, double learning_rate = 0.1) {
     double x = initial_guess;
     for (int i = 0; i < iterations; ++i) {
-        double fx = (*func)(x);
         double dfx = func->GetDeriv(x);
-        double gradient = fx * dfx;
-        x = x - learning_rate * gradient;
+        double f = (*func)(x);
+        std::cout << x << std::endl;
+        x = x - learning_rate * (f / dfx);
     }
     return x;
 }
