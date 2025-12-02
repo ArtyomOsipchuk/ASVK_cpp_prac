@@ -74,6 +74,11 @@ TEST(FunctionTest, Operators) {
     EXPECT_DOUBLE_EQ((*prod)(2.0), 12.0);
 }
 
+TEST(FunctionTest, Error) {
+    auto f = FunctionFactory::Create("power", {2}); // x^2
+    EXPECT_THROW({ auto sum = *f + "abc"; }, std::logic_error);
+}
+
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

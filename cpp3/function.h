@@ -22,9 +22,6 @@ public:
     virtual std::string ToString() const = 0;
     
     virtual TFunctionPtr Clone() const = 0;
-    
-    virtual bool IsPolynomial() const { return false; }
-    virtual bool IsConstant() const { return false; }
 };
 
 class UnsupportedOperation : public std::logic_error {
@@ -54,7 +51,6 @@ public:
     double GetDeriv(double) const override { return 0.0; }
     std::string ToString() const override { return "Const " + std::to_string(value_); }
     TFunctionPtr Clone() const override { return std::make_shared<ConstFunction>(value_); }
-    bool IsConstant() const override { return true; }
 };
 
 class PowerFunction : public TFunction {
@@ -127,8 +123,6 @@ public:
     TFunctionPtr Clone() const override { 
         return std::make_shared<PolynomialFunction>(coeffs_); 
     }
-    
-    bool IsPolynomial() const override { return true; }
 };
 
 class SumFunction : public TFunction {
@@ -255,29 +249,13 @@ TFunctionPtr operator+(const TFunction& lhs, const TFunction& rhs) {
 }
 
 template <typename T>
-TFunctionPtr operator+(const TFunction& lhs, const T& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<SumFunction>(lhs.Clone(), rhs->Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
+TFunctionPtr operator+(const TFunction&, const T&) {
+    throw std::logic_error("Unsupported type for operator+");
 }
 
 template <typename T>
-TFunctionPtr operator+(const T& lhs, const TFunction& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
+TFunctionPtr operator+(const T&, const TFunction& rhs) {
         throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<SumFunction>(lhs->Clone(), rhs.Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
 }
 
 TFunctionPtr operator-(const TFunction& lhs, const TFunction& rhs) {
@@ -285,29 +263,13 @@ TFunctionPtr operator-(const TFunction& lhs, const TFunction& rhs) {
 }
 
 template <typename T>
-TFunctionPtr operator-(const TFunction& lhs, const T& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<DifferenceFunction>(lhs.Clone(), rhs->Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
+TFunctionPtr operator-(const TFunction&, const T&) {
+    throw std::logic_error("Unsupported type for operator-");
 }
 
 template <typename T>
-TFunctionPtr operator-(const T& lhs, const TFunction& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<DifferenceFunction>(lhs->Clone(), rhs.Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
+TFunctionPtr operator-(const T&, const TFunction&) {
+        throw std::logic_error("Unsupported type for operator-");
 }
 
 TFunctionPtr operator*(const TFunction& lhs, const TFunction& rhs) {
@@ -315,29 +277,13 @@ TFunctionPtr operator*(const TFunction& lhs, const TFunction& rhs) {
 }
 
 template <typename T>
-TFunctionPtr operator*(const TFunction& lhs, const T& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<ProductFunction>(lhs.Clone(), rhs->Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
+TFunctionPtr operator*(const TFunction&, const T&) {
+    throw std::logic_error("Unsupported type for operator*");
 }
 
 template <typename T>
-TFunctionPtr operator*(const T& lhs, const TFunction& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<ProductFunction>(lhs->Clone(), rhs.Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
+TFunctionPtr operator*(const T&, const TFunction&) {
+        throw std::logic_error("Unsupported type for operator*");
 }
 
 TFunctionPtr operator/(const TFunction& lhs, const TFunction& rhs) {
@@ -345,29 +291,13 @@ TFunctionPtr operator/(const TFunction& lhs, const TFunction& rhs) {
 }
 
 template <typename T>
-TFunctionPtr operator/(const TFunction& lhs, const T& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<QuotientFunction>(lhs.Clone(), rhs->Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
+TFunctionPtr operator/(const TFunction&, const T&) {
+    throw std::logic_error("Unsupported type for operator/");
 }
 
 template <typename T>
-TFunctionPtr operator/(const T& lhs, const TFunction& rhs) {
-    if constexpr (!std::is_same_v<std::decay_t<T>, TFunction> && !std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        throw std::logic_error("Unsupported type for operator+");
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunctionPtr>) {
-        return std::make_shared<QuotientFunction>(lhs->Clone(), rhs.Clone());
-    }
-    if constexpr (std::is_same_v<std::decay_t<T>, TFunction>) {
-        return operator+(lhs, rhs);
-    }
+TFunctionPtr operator/(const T&, const TFunction&) {
+        throw std::logic_error("Unsupported type for operator/");
 }
 
 double GradientDescentRoot(TFunctionPtr func, double initial_guess, int iterations, double learning_rate = 0.1) {

@@ -17,7 +17,7 @@ tests: tests.cpp
 	./tests
 
 clean:
-	rm -f main *.o
+	rm -f main tests *.o
 
 run: main
 	./main
